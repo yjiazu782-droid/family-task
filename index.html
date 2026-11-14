@@ -1,1 +1,183 @@
 
+<!DOCTYPE html>
+
+<html lang="ja">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>わが家の作業ボード</title>
+
+<style>
+
+body{font-family:sans-serif;margin:0;background:#f5f5f2;color:#333}
+
+header{padding:16px;background:#647d72;color:white}
+
+h2{margin:4px 0}
+
+nav{display:flex;gap:6px;overflow:auto;padding:12px}
+
+button{border:0;border-radius:10px;padding:10px;background:#e4e9e5}
+
+button.active{background:#647d72;color:white}
+
+main{padding:12px;overflow:auto}
+
+table{border-collapse:collapse;min-width:900px;width:100%;background:white}
+
+th,td{border:1px solid #ddd;padding:9px;text-align:left;min-width:65px}
+
+th:first-child{position:sticky;left:0;background:#e9eee9;z-index:1;min-width:65px}
+
+td:first-child{position:sticky;left:0;background:#f0f2ee;font-weight:bold}
+
+.task{background:#e1eee5;border-radius:7px;padding:7px;margin:3px 0;font-size:12px}
+
+.task.done{text-decoration:line-through;opacity:.45}
+
+#remaining{padding:15px;background:white;margin:12px;border-radius:12px}
+
+</style>
+
+</head>
+
+<body>
+
+<header>
+
+<h2>🏠 わが家の作業ボード</h2>
+
+<div>家族みんなで協力しよう！</div>
+
+</header>
+
+<nav id="days"></nav>
+
+<main><div id="schedule"></div></main>
+
+<section id="remaining">
+
+<h3>☑ 未完了の作業</h3>
+
+<div id="list"></div>
+
+</section>
+
+<script>
+
+const members=["Mさん","Tさん","Aさん","Kさん","家族共通"];
+
+const hours=["6時","7時","8時","9時","10時","11時","12時","13時","14時","15時","16時","17時","18時","19時","20時","21時"];
+
+const tasks={
+
+"月曜日":[
+
+["Mさん","9時","仕事"],
+
+["Tさん","9時","仕事"],
+
+["Aさん","8時","学校"],
+
+["Aさん","19時","塾"],
+
+["家族共通","6時","朝食準備"],
+
+["家族共通","17時","夕食準備"],
+
+["家族共通","18時","夕食・ペットのお世話"],
+
+["家族共通","20時","お風呂・片付け"]
+
+],
+
+"火曜日":[
+
+["Mさん","6時","仕事"],
+
+["Aさん","8時","学校"],
+
+["Aさん","19時","塾"],
+
+["Kさん","16時","英語"],
+
+["家族共通","17時","夕食準備"]
+
+],
+
+"水曜日":[["Aさん","8時","学校"],["家族共通","9時","不燃・危険ごみ"]],
+
+"木曜日":[["Aさん","8時","学校"],["Aさん","19時","塾"],["家族共通","9時","可燃・段ボール・紙ごみ"]],
+
+"金曜日":[["Mさん","6時","仕事"],["Tさん","9時","仕事"],["Aさん","8時","学校"],["Aさん","19時","バレー"],["Tさん","18時","送迎・買い物"],["家族共通","9時","資源ごみ"]],
+
+"土曜日":[["Tさん","10時","サッカー送迎"],["Kさん","10時","サッカー"],["Kさん","13時","スイミング"],["Tさん","13時","スイミング送迎・買い物"]],
+
+"日曜日":[["Mさん","6時","仕事"],["Kさん","10時","学校・英語宿題"],["Kさん","9時","階段・玄関掃除"],["Aさん","9時","洗面所・トイレ掃除"],["Tさん","9時","洗濯物・ハンガー整理"]]
+
+};
+
+let day="月曜日";
+
+let done=JSON.parse(localStorage.getItem("doneTasks")||"{}");
+
+function render(){
+
+document.getElementById("days").innerHTML=Object.keys(tasks).map(d=>`<button class="${d===day?'active':''}" onclick="day='${d}';render()">${d}</button>`).join("");
+
+let html="<table><tr><th>家族</th>"+hours.map(h=>`<th>${h}</th>`).join("")+"</tr>";
+
+members.forEach(m=>{
+
+html+=`<tr><td>${m}</td>`;
+
+hours.forEach(h=>{
+
+let found=tasks[day].filter(t=>t[0]===m&&t[1]===h);
+
+html+="<td>"+found.map(t=>{
+
+let key=day+t[0]+t[1]+t[2];
+
+return `<div class="task ${done[key]?'done':''}" onclick="toggle('${key}')">${t[2]} ${done[key]?'✓':''}</div>`;
+
+}).join("")+"</td>";
+
+});
+
+html+="</tr>";
+
+});
+
+html+="</table>";
+
+document.getElementById("schedule").innerHTML=html;
+
+let remaining=tasks[day].filter(t=>!done[day+t[0]+t[1]+t[2]]);
+
+document.getElementById("list").innerHTML=remaining.length?remaining.map(t=>`<div>□ ${t[0]}・${t[1]} ${t[2]}</div>`).join(""):"全部完了！おつかれさま🎉";
+
+}
+
+function toggle(key){
+
+done[key]=!done[key];
+
+localStorage.setItem("doneTasks",JSON.stringify(done));
+
+render();
+
+}
+
+render();
+
+</script>
+
+</body>
+
+</html>
+
