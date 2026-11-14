@@ -3,137 +3,466 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>わが家の作業ボード</title>
 <style>
-*{box-sizing:border-box}
-body{margin:0;font-family:sans-serif;background:#f5f6f2;color:#333}
-header{background:#647d72;color:white;padding:16px}
-h2{margin:0 0 5px}
-nav{display:flex;gap:6px;overflow-x:auto;padding:12px}
-button{border:0;border-radius:9px;padding:10px 14px;background:#e3e9e4;white-space:nowrap}
-
-button.active{background:#647d72;color:white}
-main{padding:8px;overflow-x:auto}
-.board{width:max-content;background:white;border-radius:10px;overflow:hidden}
-.timeline{display:grid;grid-template-columns:90px repeat(68,42px);width:max-content;position:relative}
-.head{background:#e9eee9;min-height:42px;align-items:center}
-.name{grid-column:1;position:sticky;left:0;z-index:3;background:#edf1ec;padding:10px 5px;font-weight:bold;border-right:1px solid #ccc}
-.hour{grid-column:span 4;text-align:center;border-left:1px solid #ccc;font-size:12px;color:#555;padding:10px 0}
-.person{height:76px;align-items:center;border-top:1px solid #ddd;background-image:linear-gradient(to right,transparent 41px,#e5e5e5 42px);background-size:42px 100%;background-position:90px 0}
-.event{grid-row:1;align-self:center;margin:5px 2px;padding:7px 3px;border-radius:7px;text-align:center;font-size:11px;line-height:1.4;overflow:hidden;min-width:0;cursor:pointer;color:#304239;background:#dcebe0}
-.father{background:#dce8f5;color:#294665}
-.mother{background:#f6e4df;color:#77483f}
-.child1{background:#f7edce;color:#665323}
-.child2{background:#e9e0f5;color:#51416b}
-.event.done{opacity:.35;text-decoration:line-through}
-#remaining{margin:14px;padding:14px;background:white;border-radius:12px}
-.small{font-size:12px;color:#666;padding:0 14px}
-
+* { box-sizing: border-box; }
+body {
+margin: 0;
+padding: 12px;
+font-family: sans-serif;
+background: #f5f6f8;
+color: #333;
+}
+h1 { font-size: 21px; margin: 8px 0 16px; }
+h2 { font-size: 17px; margin: 20px 0 10px; }
+.days {
+display: flex;
+gap: 6px;
+overflow-x: auto;
+padding-bottom: 12px;
+}
+.day-button {
+border: 1px solid #ccc;
+background: white;
+border-radius: 8px;
+padding: 9px 13px;
+white-space: nowrap;
+font-size: 14px;
+}
+.day-button.active {
+background: #3478d4;
+color: white;
+border-color: #3478d4;
+}
+.board-scroll {
+overflow-x: auto;
+background: white;
+border-radius: 10px;
+border: 1px solid #ddd;
+}
+.time-header, .person-row {
+display: grid;
+grid-template-columns: 90px 2856px;
+}
+.time-header {
+height: 36px;
+border-bottom: 1px solid #ccc;
+background: #f0f2f5;
+}
+.time-spacer {
+position: sticky;
+left: 0;
+z-index: 3;
+background: #f0f2f5;
+border-right: 1px solid #ddd;
+}
+.hours {
+display: grid;
+grid-template-columns: repeat(17, 168px);
+}
+.hour {
+text-align: center;
+font-size: 12px;
+line-height: 36px;
+border-left: 1px solid #ccc;
+}
+.person-row {
+border-bottom: 1px solid #ddd;
+min-height: 64px;
+}
+.person {
+position: sticky;
+left: 0;
+z-index: 2;
+display: flex;
+align-items: center;
+justify-content: center;
+font-size: 13px;
+font-weight: bold;
+background: #f7f8fa;
+border-right: 1px solid #ddd;
+}
+.timeline {
+position: relative;
+width: 2856px;
+background-image:
+repeating-linear-gradient(
+to right,
+transparent 0,
+transparent 41px,
+#eeeeee 41px,
+#eeeeee 42px
+),
+repeating-linear-gradient(
+to right,
+transparent 0,
+transparent 167px,
+#d4d4d4 167px,
+#d4d4d4 168px
+);
+}
+.event {
+position: absolute;
+height: 23px;
+border-radius: 5px;
+padding: 3px 4px;
+font-size: 11px;
+line-height: 17px;
+overflow: hidden;
+white-space: nowrap;
+text-overflow: ellipsis;
+cursor: pointer;
+border: 1px solid rgba(0,0,0,.12);
+}
+.event.done {
+opacity: .38;
+text-decoration: line-through;
+}
+.event.father { background: #dce9fa; }
+.event.mother { background: #f9e3ed; }
+.event.child1 { background: #e4e0fa; }
+.event.child2 { background: #dff1df; }
+.event.family { background: #fff0cf; }
+#unfinished {
+background: white;
+border-radius: 10px;
+padding: 12px;
+border: 1px solid #ddd;
+}
+.task-item {
+display: flex;
+gap: 8px;
+align-items: flex-start;
+padding: 9px 0;
+border-bottom: 1px solid #eee;
+font-size: 14px;
+}
+.task-item:last-child { border-bottom: none; }
+.task-time {
+color: #777;
+white-space: nowrap;
+font-size: 12px;
+min-width: 82px;
+}
+.task-person { font-weight: bold; min-width: 65px; }
+.empty { color: #888; font-size: 14px; padding: 10px 0; }
+.note { font-size: 12px; color: #777; margin-top: 12px; }
 </style>
 </head>
 <body>
-<header>
-<h2>🏠 わが家の作業ボード</h2>
-<div>家族みんなで協力しよう！</div>
-</header>
-<nav id="days"></nav>
-<div class="small">横にスクロールできます。予定をタップすると完了になります。</div>
-<main><div class="board" id="schedule"></div></main>
-<section id="remaining">
-<h3>☑ 未完了の予定</h3>
 
-<div id="list"></div>
-</section>
+<h1>🏠 わが家の作業ボード</h1>
+<div class="days" id="days"></div>
+
+<div class="board-scroll">
+<div class="time-header">
+<div class="time-spacer"></div>
+<div class="hours" id="hours"></div>
+</div>
+<div id="board"></div>
+</div>
+
+<h2>📋 今日の未完了タスク</h2>
+<div id="unfinished"></div>
+<p class="note">予定をタップすると完了・未完了を切り替えられます。</p>
+
 <script>
-const days=["月曜日","火曜日","水曜日","木曜日","金曜日","土曜日","日曜日"];
-const people=[
+const days = [
+"月曜日","火曜日","水曜日","木曜日",
+"金曜日","土曜日","日曜日"
+];
+
+const people = [
 {name:"父",type:"father"},
 {name:"母",type:"mother"},
 {name:"子供1",type:"child1"},
-{name:"子供2",type:"child2"}
+{name:"子供2",type:"child2"},
+{name:"家族共通",type:"family"}
 ];
-const events=[
+
+const events = [
+
+// 家族共通：毎日
+...days.flatMap(day => [
+[day,"家族共通","6:45","7:00","朝食準備"],
+[day,"家族共通","9:00","10:00","洗濯"],
+[day,"家族共通","17:00","18:00","夕飯準備"],
+[day,"家族共通","19:00","19:30","風呂掃除"],
+[day,"家族共通","22:00","23:00","洗濯・キッチンリセット"]
+]),
+
+// ゴミ出し
+["月曜日","家族共通","9:00","9:15","燃えるゴミ・段ボール・紙ゴミ"],
+["木曜日","家族共通","9:00","9:15","燃えるゴミ・段ボール・紙ゴミ"],
+["水曜日","家族共通","9:00","9:15","燃えないゴミ・危険ゴミ"],
+["金曜日","家族共通","9:00","9:15","資源ゴミ"],
+
+// 日曜日の掃除
+["日曜日","子供2","9:00","10:00","階段・玄関の掃除"],
+["日曜日","子供1","9:00","10:00","洗面所・トイレの掃除"],
+["日曜日","父","9:00","10:00","洗濯物の片付け・ハンガー回収"],
+
+// 父：仕事
 ["月曜日","父","8:00","23:00","仕事"],
 ["火曜日","父","8:00","23:00","仕事"],
 ["水曜日","父","8:00","23:00","仕事"],
 ["木曜日","父","8:00","23:00","仕事"],
 ["金曜日","父","8:00","18:00","仕事"],
 
+// 父：送迎
+["金曜日","父","19:00","21:00","習い事送迎"],
+["土曜日","父","10:00","11:00","習い事送迎"],
+["土曜日","父","13:30","14:30","習い事送迎"],
+
+// 母：仕事
 ["月曜日","母","9:00","14:00","仕事"],
 ["火曜日","母","6:45","9:00","仕事"],
 ["金曜日","母","6:45","9:00","仕事"],
 ["日曜日","母","6:45","9:00","仕事"],
 
-["月曜日","子供1","8:00","18:00","学校"],
-["火曜日","子供1","8:00","18:00","学校"],
-["水曜日","子供1","8:00","18:00","学校"],
-["木曜日","子供1","8:00","18:00","学校"],
-["金曜日","子供1","8:00","18:00","学校"],
+// 母：火曜日の送迎
+["火曜日","母","16:00","16:15","習い事送迎"],
+["火曜日","母","17:15","17:30","習い事送迎"],
+
+// 子供1：学校
+...["月曜日","火曜日","水曜日","木曜日","金曜日"].map(day => [
+day,"子供1","8:00","18:00","学校"
+]),
+
+// 子供1：習い事
 ["月曜日","子供1","19:30","21:30","塾"],
 ["火曜日","子供1","19:30","21:30","塾"],
 ["木曜日","子供1","19:30","21:30","塾"],
-["金曜日","子供1","19:00","21:00","バレーボール"],
+["金曜日","子供1","19:00","21:00","習い事"],
 
-["火曜日","子供2","16:00","17:30","英語"],
-["土曜日","子供2","10:00","11:00","サッカー"],
-["土曜日","子供2","13:30","14:30","スイミング"],
-["日曜日","子供2","10:00","11:00","学校"]
+// 子供1：毎日の生活
+...days.flatMap(day => [
+[day,"子供1","7:00","7:15","顔洗い・着替え"],
+[day,"子供1","7:15","8:00","朝食・歯みがき"],
+[day,"子供1","18:00","19:00","カバン整理・準備・宿題・計画した勉強"],
+[day,"子供1","18:30","19:00","夕食"],
+[day,"子供1","22:00","22:30","風呂・歯みがき"],
+[day,"子供1","23:00","23:15","寝る"]
+]),
+
+// 子供2：学校
+...["月曜日","火曜日","水曜日","木曜日","金曜日"].map(day => [
+day,"子供2","8:00","16:00","学校"
+]),
+
+// 子供2：習い事
+["火曜日","子供2","16:00","17:30","英語（習い事）"],
+["土曜日","子供2","10:00","11:00","サッカー（習い事）"],
+["土曜日","子供2","13:30","14:30","スイミング（習い事）"],
+
+// 子供2：日曜日
+["日曜日","子供2","10:00","11:00","宿題確認"],
+
+// 子供2：毎日の生活
+...days.flatMap(day => [
+[day,"子供2","7:00","7:15","顔洗い・着替え"],
+[day,"子供2","7:15","8:00","朝食・歯みがき"],
+[day,"子供2","16:00","18:00","カバン整理・準備・宿題・計画した勉強"],
+[day,"子供2","18:30","19:00","夕食"],
+[day,"子供2","20:00","20:30","ペットの世話"],
+[day,"子供2","20:30","21:00","風呂・歯みがき"],
+[day,"子供2","21:00","21:30","部屋の片付け"],
+[day,"子供2","21:30","21:45","寝る"]
+])
 ];
 
-let day="月曜日";
-let done=JSON.parse(localStorage.getItem("familyDone")||"{}");
+let selectedDay = "月曜日";
+const storageKey = "familyTaskBoardDone";
 
-function minutes(t){
-const [h,m]=t.split(":").map(Number);
-return h*60+m;
+function loadDone() {
+try {
+return JSON.parse(localStorage.getItem(storageKey)) || {};
+} catch (e) {
+return {};
 }
-function column(t){
-return Math.round((minutes(t)-360)/15)+2;
 }
-function key(e){return e.join("|");}
 
-function render(){
-document.getElementById("days").innerHTML=days.map(d=>
+let done = loadDone();
 
-`<button class="${d===day?"active":""}" onclick="day='${d}';render()">${d}</button>`
-).join("");
-
-let html='<div class="timeline head"><div class="name">家族</div>';
-for(let h=6;h<23;h++){
-html+=`<div class="hour">${h}:00</div>`;
+function saveDone() {
+localStorage.setItem(storageKey, JSON.stringify(done));
 }
-html+='</div>';
 
-people.forEach(p=>{
-html+=`<div class="timeline person"><div class="name">${p.name}</div>`;
-events.filter(e=>e[0]===day&&e[1]===p.name).forEach(e=>{
-const k=key(e);
-const start=column(e[2]);
-const end=column(e[3]);
-html+=`<div class="event ${p.type} ${done[k]?"done":""}"
-style="grid-column:${start}/${end}"
-onclick="toggle('${encodeURIComponent(k)}')">
-${e[4]}<br>${e[2]}〜${e[3]}
-${done[k]?"✓":""}
-</div>`;
-});
-html+="</div>";
-});
-document.getElementById("schedule").innerHTML=html;
-
-const unfinished=events.filter(e=>e[0]===day&&!done[key(e)]);
-document.getElementById("list").innerHTML=unfinished.length?
-unfinished.map(e=>`<div>□ ${e[1]}　${e[2]}〜${e[3]}　${e[4]}</div>`).join(""):
-"この日の予定はすべて完了！🎉";
+function timeToMinutes(time) {
+const parts = time.split(":").map(Number);
+return parts[0] * 60 + parts[1];
 }
-function toggle(k){
-k=decodeURIComponent(k);
-done[k]=!done[k];
-localStorage.setItem("familyDone",JSON.stringify(done));
 
+function toggleEvent(index) {
+const key = selectedDay + "_" + index;
+done[key] = !done[key];
+saveDone();
 render();
 }
+
+function renderDays() {
+const container = document.getElementById("days");
+container.innerHTML = "";
+
+days.forEach(day => {
+const button = document.createElement("button");
+button.className = "day-button" +
+(day === selectedDay ? " active" : "");
+button.textContent = day;
+
+button.addEventListener("click", () => {
+selectedDay = day;
+render();
+});
+
+container.appendChild(button);
+});
+}
+
+function renderHours() {
+const container = document.getElementById("hours");
+container.innerHTML = "";
+
+for (let hour = 6; hour < 23; hour++) {
+const label = document.createElement("div");
+label.className = "hour";
+label.textContent = hour + ":00";
+container.appendChild(label);
+}
+}
+
+function renderBoard() {
+const board = document.getElementById("board");
+board.innerHTML = "";
+
+people.forEach(person => {
+const rowEvents = [];
+
+events.forEach((event,index) => {
+if (event[0] === selectedDay && event[1] === person.name) {
+rowEvents.push({event,index});
+}
+});
+
+const laneEnds = [];
+
+rowEvents.sort((a,b) =>
+timeToMinutes(a.event[2]) - timeToMinutes(b.event[2])
+);
+
+rowEvents.forEach(item => {
+const start = timeToMinutes(item.event[2]);
+const end = timeToMinutes(item.event[3]);
+
+let lane = laneEnds.findIndex(value => value <= start);
+
+if (lane === -1) {
+lane = laneEnds.length;
+laneEnds.push(end);
+} else {
+laneEnds[lane] = end;
+}
+
+item.lane = lane;
+});
+
+const lanes = Math.max(1,laneEnds.length);
+const rowHeight = Math.max(64, lanes * 27 + 10);
+
+const row = document.createElement("div");
+row.className = "person-row";
+row.style.height = rowHeight + "px";
+
+const name = document.createElement("div");
+name.className = "person";
+name.textContent = person.name;
+
+const timeline = document.createElement("div");
+timeline.className = "timeline";
+timeline.style.height = rowHeight + "px";
+
+rowEvents.forEach(item => {
+const event = item.event;
+const start = timeToMinutes(event[2]);
+const end = timeToMinutes(event[3]);
+
+const left = (start - 360) / 15 * 42;
+const width = (end - start) / 15 * 42;
+
+const bar = document.createElement("div");
+bar.className = "event " + person.type;
+
+if (done[selectedDay + "_" + item.index]) {
+bar.classList.add("done");
+}
+
+bar.style.left = left + "px";
+bar.style.width = Math.max(width,8) + "px";
+bar.style.top = (5 + item.lane * 27) + "px";
+bar.textContent = event[4];
+bar.title = event[2] + "〜" + event[3] + " " + event[4];
+
+bar.addEventListener("click", () => {
+toggleEvent(item.index);
+});
+
+timeline.appendChild(bar);
+});
+
+row.appendChild(name);
+row.appendChild(timeline);
+board.appendChild(row);
+});
+}
+
+function renderUnfinished() {
+const container = document.getElementById("unfinished");
+container.innerHTML = "";
+
+let count = 0;
+
+events.forEach((event,index) => {
+if (event[0] !== selectedDay) return;
+
+const key = selectedDay + "_" + index;
+if (done[key]) return;
+
+count++;
+
+const item = document.createElement("div");
+item.className = "task-item";
+
+const time = document.createElement("span");
+time.className = "task-time";
+time.textContent = event[2] + "〜" + event[3];
+
+const person = document.createElement("span");
+person.className = "task-person";
+person.textContent = event[1];
+
+const task = document.createElement("span");
+task.textContent = event[4];
+
+item.appendChild(time);
+item.appendChild(person);
+item.appendChild(task);
+container.appendChild(item);
+});
+
+if (count === 0) {
+container.innerHTML =
+'<div class="empty">🎉 今日のタスクはすべて完了！</div>';
+}
+}
+
+function render() {
+renderDays();
+renderHours();
+renderBoard();
+renderUnfinished();
+}
+
 render();
 </script>
 </body>
